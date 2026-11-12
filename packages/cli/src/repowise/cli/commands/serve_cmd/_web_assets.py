@@ -1,4 +1,4 @@
-"""Node/npm detection and web UI bundle resolution (cache, download, local build)."""
+"""Node/bun detection and web UI bundle resolution (cache, download, local build)."""
 
 from __future__ import annotations
 
@@ -50,9 +50,9 @@ def _node_major_version(node: str) -> int | None:
         return None
 
 
-def _npm_available() -> str | None:
-    """Return the path to npm binary, or None."""
-    return shutil.which("npm")
+def _bun_available() -> str | None:
+    """Return the path to bun binary, or None."""
+    return shutil.which("bun")
 
 
 def _web_is_cached(version: str) -> bool:
@@ -222,21 +222,21 @@ def _download_web(version: str) -> bool:
         os.unlink(tmp_path)
 
 
-def _build_local_web(web_dir: Path, npm: str) -> bool:
+def _build_local_web(web_dir: Path, bun: str) -> bool:
     """Build the Next.js frontend from source."""
     console.print("[dim]Building web UI (first time only)...[/dim]")
     try:
         # Install deps if needed
         if not (web_dir / "node_modules").exists():
             subprocess.run(
-                [npm, "install"],
+                [bun, "install"],
                 cwd=str(web_dir),
                 check=True,
                 capture_output=True,
             )
         # Build
         subprocess.run(
-            [npm, "run", "build"],
+            [bun, "run", "build"],
             cwd=str(web_dir),
             check=True,
             capture_output=True,

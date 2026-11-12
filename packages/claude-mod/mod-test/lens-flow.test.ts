@@ -1,4 +1,4 @@
-// Runs under `claude plugin test` against the built bundle (npm run test:mod):
+// Runs under `claude plugin test` against the built bundle (bun run test:mod):
 // tool.call returns what core returned, and the Flow tab shows the turn's
 // Repowise call with what its reply was built from, its detail on a press.
 // Core is the test's own stubs.

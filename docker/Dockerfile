@@ -10,22 +10,25 @@
 # Alpine (musl) builds produce a node binary that fails to execute in Debian slim with exit code 127.
 FROM node:20-bookworm-slim AS frontend-builder
 
+COPY --from=oven/bun:1.4.4-slim /usr/local/bin/bun /usr/local/bin/bun
+
 WORKDIR /app
 
 # Copy root manifest/lockfile for workspace resolution
-COPY package.json package-lock.json* ./
+COPY package.json bun.lock bunfig.toml ./
 
-# Copy only workspace package.json manifests first so the npm install layer
+# Copy only workspace package.json manifests first so the install layer
 # is cached independently of source changes. Any edit to a .ts/.tsx/etc. file
-# will skip straight to `next build` without re-running the 2-min install.
-COPY packages/web/package.json       ./packages/web/package.json
-COPY packages/types/package.json     ./packages/types/package.json
-COPY packages/ui/package.json        ./packages/ui/package.json
+# will skip straight to `next build` without re-running the install.
+# Every workspace manifest is needed for a frozen lockfile to match.
+COPY packages/web/package.json        ./packages/web/package.json
+COPY packages/types/package.json      ./packages/types/package.json
+COPY packages/ui/package.json         ./packages/ui/package.json
 COPY packages/api-client/package.json ./packages/api-client/package.json
+COPY packages/vscode/package.json     ./packages/vscode/package.json
+COPY packages/claude-mod/package.json ./packages/claude-mod/package.json
 
-# Change directory to web package and install dependencies
-WORKDIR /app/packages/web
-RUN npm install --production=false
+RUN bun install --frozen-lockfile --filter ./packages/web
 
 # Copy full package source (after install — source changes skip the install cache)
 WORKDIR /app
@@ -35,7 +38,7 @@ COPY packages/ ./packages/
 WORKDIR /app/packages/web
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NEXT_PUBLIC_REPOWISE_API_URL=http://localhost:7337
-RUN npm run build
+RUN bun run build
 
 # ---------------------------------------------------------------------------
 # Stage 2: Python backend + frontend runtime
@@ -47,10 +50,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy Node.js from the official image instead of piping curl|bash
+# Copy Node.js from the official image instead of piping curl|bash (runs server.js)
 COPY --from=frontend-builder /usr/local/bin/node /usr/local/bin/node
-COPY --from=frontend-builder /usr/local/lib/node_modules /usr/local/lib/node_modules
-RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
 WORKDIR /app
 

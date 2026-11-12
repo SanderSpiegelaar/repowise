@@ -14,7 +14,7 @@
 
 - [ ] Tests pass (`pytest`)
 - [ ] Lint passes (`ruff check .`)
-- [ ] Web build passes (`npm run build`) *(if frontend changes)*
+- [ ] Web build passes (`bun run build`) *(if frontend changes)*
 
 ## Checklist
 

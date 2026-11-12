@@ -29,28 +29,31 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: package-lock.json
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Type check
-        run: npm run type-check --workspace packages/vscode
+        run: bun run --cwd packages/vscode type-check
 
       # Build must run in CI, not just type-check: a barrel value-import once
       # passed tsc but broke the bundle (see packages/vscode/RELEASING.md).
       - name: Build extension host (asserts bundle size budget)
-        run: npm run build --workspace packages/vscode
+        run: bun run --cwd packages/vscode build
 
       - name: Build webviews
-        run: npm run build:webview --workspace packages/vscode
+        run: bun run --cwd packages/vscode build:webview
 
       - name: Webview unit tests
-        run: npm run test:webview --workspace packages/vscode
+        run: bun run --cwd packages/vscode test:webview
 
       - name: Smoke test under a virtual display
-        run: xvfb-run -a npm run test --workspace packages/vscode
+        run: xvfb-run -a bun run --cwd packages/vscode test
 
       - name: Resolve release channel
         id: channel
@@ -68,6 +71,6 @@ jobs:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
           FLAG: ${{ steps.channel.outputs.flag }}
         run: |
-          npx @vscode/vsce package $FLAG --no-dependencies -o repowise.vsix
-          npx @vscode/vsce publish $FLAG --no-dependencies --packagePath repowise.vsix
-          npx ovsx publish repowise.vsix $FLAG
+          bunx @vscode/vsce package $FLAG --no-dependencies -o repowise.vsix
+          bunx @vscode/vsce publish $FLAG --no-dependencies --packagePath repowise.vsix
+          bunx ovsx publish repowise.vsix $FLAG

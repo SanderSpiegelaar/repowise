@@ -460,23 +460,23 @@ def fake_run(monkeypatch) -> dict:
 
 def test_build_local_web_installs_then_builds(tmp_path, fake_run) -> None:
     calls = fake_run["calls"]
-    assert serve_cmd._build_local_web(tmp_path, "npm") is True
-    assert [c[0] for c in calls] == [["npm", "install"], ["npm", "run", "build"]]
+    assert serve_cmd._build_local_web(tmp_path, "bun") is True
+    assert [c[0] for c in calls] == [["bun", "install"], ["bun", "run", "build"]]
     assert all(c[1]["cwd"] == str(tmp_path) and c[1]["check"] for c in calls)
 
 
 def test_build_local_web_skips_install_with_node_modules(tmp_path, fake_run) -> None:
     calls = fake_run["calls"]
     (tmp_path / "node_modules").mkdir()
-    assert serve_cmd._build_local_web(tmp_path, "npm") is True
-    assert [c[0] for c in calls] == [["npm", "run", "build"]]
+    assert serve_cmd._build_local_web(tmp_path, "bun") is True
+    assert [c[0] for c in calls] == [["bun", "run", "build"]]
 
 
 def test_build_local_web_failure_returns_false(tmp_path, fake_run) -> None:
     calls = fake_run["calls"]
     fake_run["fail_at"] = 1
-    assert serve_cmd._build_local_web(tmp_path, "npm") is False
-    assert [c[0] for c in calls] == [["npm", "install"]]
+    assert serve_cmd._build_local_web(tmp_path, "bun") is False
+    assert [c[0] for c in calls] == [["bun", "install"]]
 
 
 # ---------------------------------------------------------------------------
@@ -574,7 +574,7 @@ def serve(monkeypatch, tmp_path) -> dict:
     st: dict = {
         "events": [],
         "node": "node",
-        "npm": "npm",
+        "bun": "bun",
         "node_major": 22,
         "local_web": None,
         "stale": False,
@@ -604,7 +604,7 @@ def serve(monkeypatch, tmp_path) -> dict:
 
     monkeypatch.setattr(_ports, "_find_free_port", free_port)
     monkeypatch.setattr(_web_assets, "_node_available", lambda: st["node"])
-    monkeypatch.setattr(_web_assets, "_npm_available", lambda: st["npm"])
+    monkeypatch.setattr(_web_assets, "_bun_available", lambda: st["bun"])
     monkeypatch.setattr(_web_assets, "_node_major_version", lambda _n: st["node_major"])
     monkeypatch.setattr(_web_assets, "_find_local_web", rec("find_local", "local_web"))
     monkeypatch.setattr(_web_assets, "_local_build_is_stale", rec("stale", "stale"))
@@ -718,7 +718,7 @@ def test_serve_stale_local_build_rebuilds(serve, tmp_path) -> None:
     _invoke()
     names = _names(serve["events"])
     assert names[4:8] == ["find_local", "stale", "build", "start"]
-    assert serve["events"][6] == ("build", tmp_path / "web", "npm")
+    assert serve["events"][6] == ("build", tmp_path / "web", "bun")
     assert serve["events"][7][4] == tmp_path / "web"
 
 
@@ -734,13 +734,13 @@ def test_serve_failed_rebuild_falls_back_to_cache(serve, tmp_path) -> None:
     assert serve["events"][8][4] is None  # local_web dropped
 
 
-def test_serve_stale_without_npm_downloads(serve, tmp_path) -> None:
+def test_serve_stale_without_bun_downloads(serve, tmp_path) -> None:
     serve["local_web"] = tmp_path / "web"
     serve["stale"] = True
-    serve["npm"] = None
+    serve["bun"] = None
     serve["download_ok"] = True
     result = _invoke()
-    assert "npm" in result.output
+    assert "bun" in result.output
     names = _names(serve["events"])
     assert names[4:9] == ["find_local", "stale", "cached", "download", "start"]
     assert serve["events"][8][4] is None

@@ -1,7 +1,7 @@
 // End-to-end check of Lens's data layer against a real local server. Local
 // only: it needs the repowise CLI on PATH and an indexed repo.
 //
-//   npm run test:e2e -w @repowise-dev/claude-mod -- <indexed-repo> [options]
+//   bun run --cwd packages/claude-mod test:e2e <indexed-repo> [options]
 //
 //   --file <rel>   the file whose importers are checked (default: the largest
 //                  drawn file with importers, among the 15 largest)

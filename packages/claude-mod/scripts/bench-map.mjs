@@ -6,7 +6,7 @@
 // last two zoomed into one folder. Budget 16 ms each; vitest
 // guards a frame at 5x that (test/overlay.test.ts).
 //
-//   npm run bench:map -w @repowise-dev/claude-mod
+//   bun run --cwd packages/claude-mod bench:map
 
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";

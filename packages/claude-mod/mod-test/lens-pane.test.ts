@@ -1,4 +1,4 @@
-// Runs under `claude plugin test` against the built bundle (npm run test:mod):
+// Runs under `claude plugin test` against the built bundle (bun run test:mod):
 // the /lens pane's tabs, the Ask field through the engine's own `ui.input`
 // chain, and the brief offered after a compaction. MCP is the test's stub.
 import { expect, test } from 'claude-code/testing'

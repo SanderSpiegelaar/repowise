@@ -7,7 +7,7 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start --port 3000",
-    "lint": "next lint",
+    "lint": "oxlint",
     "type-check": "tsc --noEmit",
     "i18n:check": "node scripts/check-i18n-keys.mjs",
     "i18n:icu": "node scripts/check-i18n-icu.mjs",
@@ -45,8 +45,6 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "^15.2.4",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7",
     "vitest": "^4.1.11"

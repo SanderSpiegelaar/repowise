@@ -65,7 +65,6 @@ node_modules/
 .nuxt/
 out/
 .npm
-.eslintcache
 .parcel-cache
 *.tsbuildinfo
 next-env.d.ts

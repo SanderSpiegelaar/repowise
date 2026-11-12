@@ -38,11 +38,11 @@ updates:
         patterns:
           - "*"
 
-  # --- JavaScript (npm workspaces) ------------------------------------------
+  # --- JavaScript (bun workspaces) ------------------------------------------
   # One entry covers every workspace: packages/types, ui, api-client, web and
-  # vscode all resolve through the root package-lock.json, so a per-workspace
+  # vscode all resolve through the root bun.lock, so a per-workspace
   # entry would split one lockfile into five competing PRs.
-  - package-ecosystem: "npm"
+  - package-ecosystem: "bun"
     directory: "/"
     schedule:
       interval: "weekly"

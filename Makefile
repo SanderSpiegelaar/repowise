@@ -77,13 +77,13 @@ health-bench:  ## Run the 3,000-file health analyzer perf benchmark
 # ---------------------------------------------------------------------------
 
 dev-web:  ## Start Next.js dev server
-	cd packages/web && npm run dev
+	cd packages/web && bun run dev
 
 build-web:  ## Build Next.js production output
-	cd packages/web && npm run build
+	cd packages/web && bun run build
 
 install-web:  ## Install Node dependencies for web package
-	cd packages/web && npm install
+	bun install
 
 # ---------------------------------------------------------------------------
 # Utilities

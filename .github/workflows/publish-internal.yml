@@ -49,22 +49,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: package-lock.json
           registry-url: "https://npm.pkg.github.com"
           scope: "@repowise-dev"
 
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Type-check + test
         run: |
-          npm run type-check --workspace @repowise-dev/types
-          npm run type-check --workspace @repowise-dev/ui
-          npm run type-check --workspace @repowise-dev/api-client
-          npm run test --workspace @repowise-dev/types
-          npm run test --workspace @repowise-dev/ui
-          npm run test --workspace @repowise-dev/api-client
+          bun run --cwd packages/types type-check
+          bun run --cwd packages/ui type-check
+          bun run --cwd packages/api-client type-check
+          bun run --cwd packages/types test
+          bun run --cwd packages/ui test
+          bun run --cwd packages/api-client test
 
       - name: Compute prerelease version
         id: ver

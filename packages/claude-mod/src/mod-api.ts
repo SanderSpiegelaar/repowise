@@ -4,7 +4,7 @@
  * Claude Code writes the full declarations (`claude-code`) into a plugin dir
  * when it loads the mod, so they do not exist where `claude` is not installed.
  * This file names only what Lens calls. It is checked against the real
- * surface locally, by `npm run test:mod` and `claude plugin validate --strict`
+ * surface locally, by `bun run test:mod` and `claude plugin validate --strict`
  * on the built bundle; CI runs neither. Extend it with each new call.
  */
 

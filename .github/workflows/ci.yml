@@ -427,64 +427,67 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: package-lock.json
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Type check
-        run: npm run type-check --workspace packages/web
+        run: bun run --cwd packages/web type-check
 
       - name: Lint
-        run: npm run lint --workspace packages/web
+        run: bun run --cwd packages/web lint
 
       - name: Lint shared packages (no framework imports)
-        run: npm run lint:shared
+        run: bun run lint:shared
 
       - name: Type check api-client
-        run: npm run type-check --workspace @repowise-dev/api-client
+        run: bun run --cwd packages/api-client type-check
 
       - name: Test api-client
-        run: npm run test --workspace @repowise-dev/api-client
+        run: bun run --cwd packages/api-client test
 
       # Compiles the generated HTTP contract too, which nothing else imports yet.
       - name: Type check types
-        run: npm run type-check --workspace @repowise-dev/types
+        run: bun run --cwd packages/types type-check
 
       - name: Test types
-        run: npm run test --workspace @repowise-dev/types
+        run: bun run --cwd packages/types test
 
       - name: Test ui
-        run: npm run test --workspace @repowise-dev/ui
+        run: bun run --cwd packages/ui test
 
       # ICU compile gate: a malformed plural or stray brace in any catalog
       # fails the build here instead of throwing on the page that renders it.
       - name: Check message catalogs compile (ICU)
-        run: npm run i18n:icu --workspace packages/web
+        run: bun run --cwd packages/web i18n:icu
 
       # Usage gate: a key a `t("...")` call asks for that `en.json` does not
       # define renders the raw key path (or throws MISSING_MESSAGE), and key
       # parity cannot see it — it compares key sets, not call sites. Structural
       # error, so it fails the build.
       - name: Check every used message key resolves
-        run: npm run i18n:usage --workspace packages/web
+        run: bun run --cwd packages/web i18n:usage
 
       # Catalog freshness only warns: English is the source of truth, so a key
       # a locale has not reached yet still renders English at runtime. The step
       # must not fail the build (the script itself exits 0 either way).
       - name: Report catalog key gaps (warn only)
-        run: npm run i18n:check --workspace packages/web
+        run: bun run --cwd packages/web i18n:check
         continue-on-error: true
 
       - name: Type check claude-mod
-        run: npm run type-check --workspace @repowise-dev/claude-mod
+        run: bun run --cwd packages/claude-mod type-check
 
       - name: Test claude-mod
-        run: npm run test --workspace @repowise-dev/claude-mod
+        run: bun run --cwd packages/claude-mod test
 
       - name: Check the committed Lens bundle is current
-        run: npm run build:mod --workspace @repowise-dev/claude-mod -- --check
+        run: bun run --cwd packages/claude-mod build:mod --check
 
   # ---------------------------------------------------------------------------
   # VS Code extension — type check, bundle-size gate, and Electron smoke test
@@ -500,11 +503,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: package-lock.json
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Resolve VS Code test version
         id: vscode-test-version
@@ -518,21 +524,21 @@ jobs:
           key: vscode-test-${{ runner.os }}-${{ steps.vscode-test-version.outputs.version }}
 
       - name: Type check
-        run: npm run type-check --workspace packages/vscode
+        run: bun run --cwd packages/vscode type-check
 
       - name: Build (asserts bundle size budget)
-        run: npm run build --workspace packages/vscode
+        run: bun run --cwd packages/vscode build
 
       - name: Build webviews (reports chunk sizes)
-        run: npm run build:webview --workspace packages/vscode
+        run: bun run --cwd packages/vscode build:webview
 
       - name: Webview unit tests
-        run: npm run test:webview --workspace packages/vscode
+        run: bun run --cwd packages/vscode test:webview
 
       - name: Smoke test under a virtual display
         run: |
           for attempt in 1 2; do
-            if xvfb-run -a --server-args="-screen 0 1280x1024x24" npm run test --workspace packages/vscode; then
+            if xvfb-run -a --server-args="-screen 0 1280x1024x24" bun run --cwd packages/vscode test; then
               exit 0
             fi
             if [ "$attempt" -eq 1 ]; then
@@ -542,7 +548,7 @@ jobs:
           exit 1
 
       - name: Package VSIX (no login required)
-        run: npm run package --workspace packages/vscode
+        run: bun run --cwd packages/vscode package
 
   # ---------------------------------------------------------------------------
   # Structurizr DSL — parse the emitter's output with the real parser.

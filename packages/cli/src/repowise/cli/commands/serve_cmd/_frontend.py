@@ -45,15 +45,15 @@ def _node_is_usable(node: str | None) -> bool:
 
 def _rebuild_stale_local_web(local_web: Path) -> bool:
     """Rebuild a local bundle that is behind its source; False means fall back."""
-    npm = _web_assets._npm_available()
-    if not npm:
+    bun = _web_assets._bun_available()
+    if not bun:
         console.print(
-            "[yellow]Local web bundle is stale and npm was not found, "
+            "[yellow]Local web bundle is stale and bun was not found, "
             "using the released bundle instead.[/yellow]"
         )
         return False
     console.print("[dim]Local web bundle is older than its source, rebuilding...[/dim]")
-    if _web_assets._build_local_web(local_web, npm):
+    if _web_assets._build_local_web(local_web, bun):
         return True
     console.print("[yellow]Local rebuild failed, using the released bundle instead.[/yellow]")
     return False

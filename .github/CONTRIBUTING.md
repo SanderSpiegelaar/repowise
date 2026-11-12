@@ -22,10 +22,10 @@ cd repowise
 uv sync --all-packages
 
 # Install web frontend dependencies
-npm install
+bun install
 
 # Build the web frontend
-npm run build
+bun run build
 
 # Verify the CLI runs
 uv run repowise --version
@@ -176,8 +176,8 @@ current ones. Changes there are welcome, but expect closer review and bring test
 4. **Run the CI checks** before pushing:
    ```bash
    uv run pytest tests/providers/ tests/unit/   # both, CI runs both
-   npm run lint
-   npm run type-check
+   bun run lint
+   bun run type-check
    uv run ruff check .
    uv run repowise doc-drift --check --baseline .github/doc-drift-baseline.json
    ```
@@ -243,7 +243,7 @@ repowise/
   nothing in CI checks formatting, and the dependency pin is wide enough that a fresh
   install can pick up a newer ruff whose formatter rewrites hundreds of files. That diff
   buries the change you actually made.
-- **TypeScript**: Linted with ESLint (`npm run lint`) and type-checked (`npm run type-check`)
+- **TypeScript**: Linted with oxlint (`bun run lint`), formatted with oxfmt (`bun run fmt`), and type-checked (`bun run type-check`)
 - Keep functions small and focused
 - Write docstrings for public APIs
 

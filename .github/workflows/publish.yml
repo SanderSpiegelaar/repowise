@@ -25,14 +25,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: package-lock.json
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
 
       - name: Install dependencies
-        run: npm ci --workspace packages/web
+        run: bun install --frozen-lockfile --filter ./packages/web
 
       - name: Build Next.js (standalone)
-        run: npm run build --workspace packages/web
+        run: bun run --cwd packages/web build
         env:
           NEXT_PUBLIC_REPOWISE_API_URL: ""
 

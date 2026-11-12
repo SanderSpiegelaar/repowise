@@ -1,5 +1,5 @@
 // Runs under `claude plugin test` against the built bundle, from a temporary
-// copy of plugins/claude-code (npm run test:mod). Not shipped in the plugin.
+// copy of plugins/claude-code (bun run test:mod). Not shipped in the plugin.
 import { expect, test } from 'claude-code/testing'
 
 const BAND = {

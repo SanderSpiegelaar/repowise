@@ -5,7 +5,7 @@
 * :mod:`._lock`: discovery lockfile
 * :mod:`._embedder`: embedder and provider env setup
 * :mod:`._ports`: port probing
-* :mod:`._web_assets`: node/npm detection and web bundle resolution
+* :mod:`._web_assets`: node/bun detection and web bundle resolution
 * :mod:`._frontend`: launching the web UI
 
 Every name is re-exported so ``repowise.cli.commands.serve_cmd`` keeps its
@@ -42,7 +42,7 @@ from ._web_assets import (
     _local_build_is_stale,
     _node_available,
     _node_major_version,
-    _npm_available,
+    _bun_available,
     _safe_extract_tar,
     _web_is_cached,
 )
@@ -66,7 +66,7 @@ __all__ = [
     "_local_build_is_stale",
     "_node_available",
     "_node_major_version",
-    "_npm_available",
+    "_bun_available",
     "_remove_serve_lock",
     "_safe_extract_tar",
     "_save_global_embedder",

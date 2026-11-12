@@ -417,7 +417,7 @@ repowise serve --port 8080 --ui-port 8081
 
 The UI needs Node >= 20, else API-only. UI sources, in precedence:
 
-1. **Local build** at `packages/web/.next/standalone/...` in a checkout; `npm run build` (if `npm` exists) when `packages/web/`, `packages/ui/src/` or `packages/types/src/` is newer.
+1. **Local build** at `packages/web/.next/standalone/...` in a checkout; `bun run build` (if `bun` exists) when `packages/web/`, `packages/ui/src/` or `packages/types/src/` is newer.
 2. **Cached download** at `~/.repowise/web/`, keyed by CLI version in `.version`.
 3. **Fresh download** of `repowise-web.tar.gz` from the matching GitHub release.
 
